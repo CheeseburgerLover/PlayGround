@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#071014">
+  <meta name="description" content="Deep Deck is a cave-crawling poker roguelike. Mine veins, forge a deck, and outplay the wardens of the deep.">
+  <title>Deep Deck — A Terraria × Balatro Roguelike</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/silkscreen-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/outfit.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="world-backdrop" aria-hidden="true">
+    <div class="backdrop-vein vein-a"></div>
+    <div class="backdrop-vein vein-b"></div>
+    <div class="backdrop-grain"></div>
+  </div>
+
+  <div class="game-shell" id="gameShell">
+    <header class="hud">
+      <div class="brand" aria-label="Deep Deck">
+        <span class="brand-mark"><i></i></span>
+        <div class="brand-copy">
+          <strong>DEEP DECK</strong>
+          <span>CAVE · CARDS · CRAVING</span>
+        </div>
+      </div>
+      <div class="progress-zone">
+        <div class="depth-line"><span id="stratumName">THE MOSSDARK</span><b id="depthLabel">DEPTH 1</b></div>
+        <div class="progress-dots" id="progressDots" aria-label="Run progress"></div>
+      </div>
+      <div class="hud-actions">
+        <div class="heart-meter" id="heartMeter" aria-label="Hearts remaining"></div>
+        <div class="gold-pill" title="Gold"><span class="coin"><i></i></span><b id="goldValue">0</b></div>
+        <button class="icon-btn deck-btn" id="deckBtn" aria-label="View deck"><span>DECK</span><b id="deckCount">52</b></button>
+        <button class="icon-btn round-btn" id="helpBtn" aria-label="How to play">?</button>
+        <button class="icon-btn round-btn" id="soundBtn" aria-label="Mute sound">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/><path class="sound-wave" d="M15 5.2v2.1a6.5 6.5 0 0 1 0 11.4v2.1a8.5 8.5 0 0 0 0-15.6z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="board">
+      <section class="cave-card" aria-label="Mining cave">
+        <div class="cave-frame">
+          <canvas id="caveCanvas" width="528" height="288" aria-label="A side-on cave with glowing ore veins"></canvas>
+          <div class="cave-scanlines" aria-hidden="true"></div>
+          <div class="cave-hud">
+            <div class="phase-chip">
+              <span id="phaseLabel">THE CLAIM</span>
+              <small id="phaseSub">Tap a glowing vein</small>
+            </div>
+            <div class="strike-box" id="strikeBox">
+              <span>PICKS</span>
+              <div class="strike-pips" id="strikePips"></div>
+            </div>
+          </div>
+          <div class="cave-tag" id="caveTag" hidden></div>
+        </div>
+        <div class="ore-strip">
+          <div class="ore-readout">
+            <span class="ore-title">ORE CHARGE</span>
+            <div class="buff-pills" id="buffPills"><span class="muted-pill">Mine to charge the next duel</span></div>
+          </div>
+          <button class="primary-btn room-action" id="roomAction"><span>FACE THE WARDEN</span><b>→</b></button>
+        </div>
+      </section>
+
+      <aside class="warden-panel" aria-label="Warden and battle status">
+        <div class="warden-top">
+          <span class="blind-badge" id="blindBadge">SMALL BLIND</span>
+          <span class="warden-count" id="wardenCount">WARDEN 1 / 9</span>
+        </div>
+        <div class="warden-main">
+          <div class="portrait-wrap">
+            <canvas id="enemyCanvas" width="180" height="180" aria-label="Warden portrait"></canvas>
+            <div class="portrait-ring" aria-hidden="true"></div>
+          </div>
+          <div class="warden-info">
+            <h2 id="enemyName">Gloop</h2>
+            <p id="enemyFlavor">A gelatinous hoarder of lost buttons.</p>
+            <div class="target-row"><span>TARGET</span><strong id="targetValue">260</strong></div>
+            <div class="target-bar"><div id="targetFill"></div><span id="targetRemain">0 / 260</span></div>
+          </div>
+        </div>
+        <div class="modifier-banner" id="modifierBanner" hidden></div>
+        <div class="scoreboard">
+          <div class="score-box chips"><span>CHIPS</span><strong id="chipValue">0</strong></div>
+          <div class="score-times">×</div>
+          <div class="score-box mult"><span>MULT</span><strong id="multValue">0</strong></div>
+          <div class="score-total"><span>HAND</span><strong id="handTotal">0</strong><small id="handName">Select cards</small></div>
+        </div>
+        <div class="round-resources">
+          <div class="resource"><span>HANDS</span><div class="pips" id="handPips"></div></div>
+          <div class="resource"><span>DISCARDS</span><div class="pips" id="discardPips"></div></div>
+          <div class="round-score"><span>ROUND</span><strong id="roundScore">0</strong></div>
+        </div>
+        <div class="charms-section">
+          <div class="charms-head"><span>CHARMS</span><span id="charmCount">0 / 6</span></div>
+          <div class="charm-row" id="charmRow"><span class="empty-charms">No charms yet</span></div>
+        </div>
+      </aside>
+
+      <section class="table-area" aria-label="Card table">
+        <div class="table-head">
+          <div class="table-label"><span id="tableKicker">HAND</span><strong id="tableHint">Tap cards to select up to five</strong></div>
+          <div class="table-head-right">
+            <span class="deck-mini" id="pilesLabel">52 IN DECK</span>
+            <button class="text-btn" id="sortBtn">SORT</button>
+          </div>
+        </div>
+        <div class="hand-zone" id="handZone"></div>
+        <div class="table-actions">
+          <button class="action-btn discard" id="discardBtn"><span>DISCARD</span><b id="discardBtnCount">2</b><small>Selected cards</small></button>
+          <button class="action-btn play" id="playBtn"><span>PLAY HAND</span><b id="playBtnCount">4</b><small>Chips × Mult</small></button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="overlay title-overlay" id="titleOverlay">
+    <div class="title-art" aria-hidden="true">
+      <div class="title-fan">
+        <div class="fan-card fan-left"><span class="fan-rank">A</span><span class="fan-suit">♠</span></div>
+        <div class="fan-card fan-mid"><span class="fan-rank">10</span><span class="fan-suit red">♥</span></div>
+        <div class="fan-card fan-right"><span class="fan-rank">K</span><span class="fan-suit red">♦</span></div>
+      </div>
+      <div class="title-pick" aria-hidden="true"><i></i></div>
+      <div class="title-depth-lines"></div>
+    </div>
+    <div class="title-inner">
+      <p class="kicker">A TERRARIA × BALATRO ROGUELIKE</p>
+      <h1><span>DEEP</span><span>DECK</span></h1>
+      <p class="tagline">Mine the dark. Play your hand.</p>
+      <div class="title-actions">
+        <button class="primary-btn huge" id="playGameBtn">PLAY</button>
+        <button class="ghost-btn" id="howBtn">HOW TO PLAY</button>
+      </div>
+      <div class="title-best" id="bestRun">NO DESCENT RECORDED</div>
+    </div>
+    <div class="title-footer"><span>9 WARDENS</span><i></i><span>3 STRATA</span><i></i><span>1 FINAL HAND</span></div>
+  </div>
+
+  <div class="overlay" id="helpOverlay" hidden>
+    <div class="sheet help-sheet">
+      <button class="close-btn" data-close="helpOverlay" aria-label="Close help">×</button>
+      <p class="sheet-kicker">THE MINER'S MANUAL</p>
+      <h2>Three taps to the bottom.</h2>
+      <div class="help-steps">
+        <article><span>I</span><h3>MINE</h3><p>Spend your pick strikes on glowing veins. Ore charges the next duel, forges cards, or lines your pockets.</p></article>
+        <article><span>II</span><h3>PLAY</h3><p>Select up to five cards. Poker hands deal <b>Chips × Mult</b> damage. Discard to dig for a better hand.</p></article>
+        <article><span>III</span><h3>DESCEND</h3><p>Claim a charm after each win, build your deck, and survive all nine wardens. Lose every heart and the cave keeps you.</p></article>
+      </div>
+      <div class="hand-chart">
+        <h3>THE HANDS</h3>
+        <div class="chart-grid">
+          <span>High Card <b>5 × 1</b></span><span>Pair <b>10 × 2</b></span>
+          <span>Two Pair <b>20 × 2</b></span><span>Three of a Kind <b>30 × 3</b></span>
+          <span>Straight <b>30 × 4</b></span><span>Flush <b>35 × 4</b></span>
+          <span>Full House <b>40 × 4</b></span><span>Four of a Kind <b>60 × 7</b></span>
+          <span>Straight Flush <b>100 × 8</b></span><span>Royal Flush <b>150 × 10</b></span>
+        </div>
+      </div>
+      <p class="help-foot">Tap cards to select. On keyboard, use <kbd>1</kbd>–<kbd>8</kbd>, <kbd>Enter</kbd> to play, and <kbd>Backspace</kbd> to discard.</p>
+      <button class="primary-btn" data-close="helpOverlay">BACK TO THE DARK</button>
+    </div>
+  </div>
+
+  <div class="overlay reward-overlay" id="rewardOverlay" hidden>
+    <div class="sheet reward-sheet">
+      <div class="reward-burst" aria-hidden="true"></div>
+      <p class="sheet-kicker">THE VEIN YIELDS</p>
+      <h2>Choose one offering.</h2>
+      <div class="reward-gold" id="rewardGold">+5 GOLD</div>
+      <div class="reward-offers" id="rewardOffers"></div>
+      <div class="reward-footer">
+        <button class="ghost-btn small" id="rerollBtn">REROLL · 2 GOLD</button>
+        <button class="ghost-btn small" id="patchBtn">PATCH UP · 4 GOLD</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="overlay" id="deckOverlay" hidden>
+    <div class="sheet deck-sheet">
+      <button class="close-btn" data-close="deckOverlay" aria-label="Close deck">×</button>
+      <p class="sheet-kicker">YOUR DESCENT</p>
+      <h2>The deck you carry.</h2>
+      <div class="deck-summary" id="deckSummary"></div>
+      <div class="deck-charms" id="deckCharms"></div>
+      <div class="deck-cards" id="deckCards"></div>
+      <button class="primary-btn" data-close="deckOverlay">CLOSE THE SATCHEL</button>
+    </div>
+  </div>
+
+  <div class="overlay end-overlay" id="endOverlay" hidden>
+    <div class="sheet end-sheet">
+      <p class="sheet-kicker" id="endKicker">THE DARK TAKES YOU</p>
+      <h2 id="endTitle">Buried Alive</h2>
+      <p class="end-copy" id="endCopy">The cave keeps your cards.</p>
+      <div class="end-stats" id="endStats"></div>
+      <div class="end-actions">
+        <button class="primary-btn" id="againBtn">DESCEND AGAIN</button>
+        <button class="ghost-btn" id="menuBtn">RETURN TO TITLE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/rules.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
