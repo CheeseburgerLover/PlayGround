@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#080b18" />
+<meta name="description" content="Terraratro — a Terraria × Balatro roguelike deckbuilder. Build a deck, forge a build, and fell eight gods of Terraria." />
+<title>Terraratro — A Terraria × Balatro Roguelike</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230b1024'/><path d='M16 4l3.3 8.7L28 16l-8.7 3.3L16 28l-3.3-8.7L4 16l8.7-3.3z' fill='%23ffd45e'/></svg>" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <symbol id="suit-melee" viewBox="0 0 24 24">
+      <path d="M20.8 2.1a1 1 0 0 1 .3.7v3.1a2 2 0 0 1-.6 1.5L11.9 16l-4-4L16.6 2.6a2 2 0 0 1 1.5-.6h2.1a1 1 0 0 1 .6.1Z"/>
+      <path d="M7 13 2 18v3l1 1h3l5-5-4-4Z" opacity=".62"/>
+      <path d="m17.6 4.4-1.5 1.5M15.4 6.6l-1.5 1.5" stroke="#000" stroke-opacity=".22" stroke-width="1.1"/>
+    </symbol>
+    <symbol id="suit-ranged" viewBox="0 0 24 24">
+      <path d="M5.2 21.5C3 15.4 5 8.2 10.7 2.6l2.2 2.2c-4.7 4.7-6.1 10.6-4.3 15.5l-3.4 1.2Z"/>
+      <path d="M6.4 20.4c3.4 1.2 9.4-.7 13.1-4.4l2.2 2.2c-4.5 4.5-9.8 6.3-14.6 5.4l-.7-3.2Z" opacity=".62"/>
+      <path d="M8.4 3.8 21 16.4M17.8 3.5h3.7v3.7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="suit-magic" viewBox="0 0 24 24">
+      <path d="M12 1.8 14.8 9l7.2 2.8-7.2 2.8L12 21.8 9.2 14.6 2 11.8 9.2 9 12 1.8Z"/>
+      <path d="m19.4 2 .7 2.1 2.1.7-2.1.7-.7 2.1-.7-2.1-2.1-.7 2.1-.7.7-2.1Z" opacity=".7"/>
+    </symbol>
+    <symbol id="suit-summon" viewBox="0 0 24 24">
+      <path d="M12 1.9C7 1.9 3.8 5.4 3.8 10c0 2.5 1.1 4.5 2.9 5.9v3.4h2.5l.6 2.8h4.4l.6-2.8h2.5v-3.4c1.8-1.4 2.9-3.4 2.9-5.9 0-4.6-3.2-8.1-8.2-8.1Z"/>
+      <circle cx="8.8" cy="10" r="1.9" fill="#000" fill-opacity=".45"/>
+      <circle cx="15.2" cy="10" r="1.9" fill="#000" fill-opacity=".45"/>
+      <path d="M10.3 16.2h3.4l-.5 2.2h-2.4l-.5-2.2Z" fill="#000" fill-opacity=".35"/>
+    </symbol>
+    <symbol id="icon-coin" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9.2" fill="currentColor"/>
+      <circle cx="12" cy="12" r="6.5" fill="none" stroke="#6b4b10" stroke-width="1.4" opacity=".55"/>
+      <path d="M12 6.6v10.8M9.6 9.1h3.7a2.1 2.1 0 0 1 0 4.2H9.6" fill="none" stroke="#6b4b10" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+    </symbol>
+    <symbol id="icon-cards" viewBox="0 0 24 24">
+      <rect x="3" y="5" width="11" height="15" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <rect x="8" y="3" width="11" height="15" rx="1.6" fill="none" stroke="currentColor" stroke-width="1.7"/>
+      <path d="m13.5 7 2.2 3.2-2.2 3.2-2.2-3.2 2.2-3.2Z" fill="currentColor" opacity=".7"/>
+    </symbol>
+    <symbol id="icon-discard" viewBox="0 0 24 24">
+      <path d="M5 7h14M9 7V4.8h6V7M7 7l1 13h8l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M10.5 10.5v6M13.5 10.5v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-sort" viewBox="0 0 24 24">
+      <path d="M7 4v16M4 17l3 3 3-3M13 6h7M13 12h5M13 18h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-sound" viewBox="0 0 24 24">
+      <path d="M4 9.5h4L13 5v14l-5-4.5H4v-5Z" fill="currentColor"/>
+      <path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-mute" viewBox="0 0 24 24">
+      <path d="M4 9.5h4L13 5v14l-5-4.5H4v-5Z" fill="currentColor"/>
+      <path d="m16.5 9 5 6m0-6-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-help" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <path d="M9.4 9.2a2.7 2.7 0 1 1 3.8 2.5c-.8.4-1.2 1-1.2 1.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="12" cy="17.2" r="1.2" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <circle cx="5" cy="12" r="1.8" fill="currentColor"/>
+      <circle cx="12" cy="12" r="1.8" fill="currentColor"/>
+      <circle cx="19" cy="12" r="1.8" fill="currentColor"/>
+    </symbol>
+    <symbol id="icon-skull" viewBox="0 0 24 24">
+      <path d="M12 2.7c-4.6 0-7.4 3.2-7.4 7.4 0 2.3 1 4.1 2.6 5.3v3.1h2.3l.5 2.5h4l.5-2.5h2.3v-3.1c1.6-1.2 2.6-3 2.6-5.3 0-4.2-2.8-7.4-7.4-7.4Z" fill="currentColor"/>
+      <circle cx="9" cy="10.2" r="1.8" fill="#0b1024"/>
+      <circle cx="15" cy="10.2" r="1.8" fill="#0b1024"/>
+    </symbol>
+    <symbol id="icon-gem" viewBox="0 0 24 24">
+      <path d="m12 2.5 7.5 6.2L12 21.5 4.5 8.7 12 2.5Z" fill="currentColor"/>
+      <path d="M4.5 8.7h15M12 2.5 9 8.7l3 12.8 3-12.8-3-6.2Z" fill="none" stroke="#000" stroke-opacity=".25" stroke-width="1"/>
+    </symbol>
+    <symbol id="icon-sword" viewBox="0 0 24 24">
+      <path d="M20.8 2.1a1 1 0 0 1 .3.7v3.1a2 2 0 0 1-.6 1.5L11.9 16l-4-4L16.6 2.6a2 2 0 0 1 1.5-.6h2.1a1 1 0 0 1 .6.1Z" fill="currentColor"/>
+      <path d="M7 13 2 18v3l1 1h3l5-5-4-4Z" fill="currentColor" opacity=".6"/>
+    </symbol>
+    <symbol id="icon-fire" viewBox="0 0 24 24">
+      <path d="M12.5 2c.6 3.6-2 5.2-3.4 7.2-1 1.4-1.2 3.4.1 4.6-.1-1.6.8-3 2-4 .3 1.9 1.7 2.8 2.5 4.3.9 1.7.4 3.6-1 4.9 2.7.2 4.8-1.8 5.3-4.2.9-4.2-2.3-7.4-5.5-12.8Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<canvas id="fx-canvas" class="fx-canvas" aria-hidden="true"></canvas>
+
+<!-- TITLE -->
+<div id="title-screen" class="screen title-screen">
+  <div class="title-sky" aria-hidden="true"></div>
+  <svg class="title-landscape" viewBox="0 0 1440 520" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyGlow" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0a0f25" stop-opacity="0"/>
+        <stop offset=".7" stop-color="#151a38" stop-opacity=".5"/>
+        <stop offset="1" stop-color="#070a17" stop-opacity="1"/>
+      </linearGradient>
+      <radialGradient id="moonGlow">
+        <stop offset="0" stop-color="#fff6cf" stop-opacity=".55"/>
+        <stop offset=".45" stop-color="#ffeaa0" stop-opacity=".13"/>
+        <stop offset="1" stop-color="#ffeaa0" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="treeLight" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#223d6b"/>
+        <stop offset="1" stop-color="#0b1228"/>
+      </linearGradient>
+      <linearGradient id="treeDark" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#14224a"/>
+        <stop offset="1" stop-color="#080d1d"/>
+      </linearGradient>
+    </defs>
+    <rect width="1440" height="520" fill="url(#skyGlow)"/>
+    <circle cx="1090" cy="118" r="210" fill="url(#moonGlow)"/>
+    <circle cx="1090" cy="118" r="58" fill="#fff2c4"/>
+    <circle cx="1071" cy="99" r="10" fill="#e8d9a8" opacity=".75"/>
+    <circle cx="1110" cy="128" r="14" fill="#e8d9a8" opacity=".55"/>
+    <circle cx="1084" cy="141" r="6" fill="#e8d9a8" opacity=".6"/>
+    <path d="M0 338 86 302l52 14 64-38 70 30 58-13 52 24 60-42 58 26 62-21 60 36 58-14 58 30 62-45 66 33 64-19 54 27 58-15 66 29 54-37 60 27 52-14 58 31 54-18v148H0Z" fill="#121a36"/>
+    <path d="M0 388 74 362l58 16 74-31 64 27 66-14 60 24 70-30 60 23 72-11 64 28 70-24 62 22 74-15 60 25 70-22 60 20 70-17 60 24 62-12 64 22 72-22v186H0Z" fill="#0b1226"/>
+    <g fill="url(#treeDark)">
+      <rect x="168" y="318" width="16" height="92"/>
+      <rect x="130" y="270" width="92" height="34"/>
+      <rect x="142" y="236" width="68" height="34"/>
+      <rect x="152" y="204" width="48" height="32"/>
+      <rect x="162" y="178" width="28" height="26"/>
+      <rect x="416" y="334" width="13" height="80"/>
+      <rect x="388" y="298" width="70" height="26"/>
+      <rect x="396" y="272" width="54" height="26"/>
+      <rect x="406" y="250" width="34" height="22"/>
+      <rect x="1236" y="322" width="18" height="96"/>
+      <rect x="1198" y="276" width="96" height="36"/>
+      <rect x="1210" y="244" width="72" height="32"/>
+      <rect x="1222" y="214" width="48" height="30"/>
+      <rect x="1232" y="190" width="28" height="24"/>
+      <rect x="846" y="342" width="12" height="70"/>
+      <rect x="824" y="312" width="58" height="24"/>
+      <rect x="832" y="290" width="42" height="22"/>
+      <rect x="840" y="272" width="26" height="18"/>
+    </g>
+    <g fill="url(#treeLight)" opacity=".85">
+      <rect x="560" y="352" width="10" height="64"/>
+      <rect x="542" y="328" width="48" height="20"/>
+      <rect x="548" y="310" width="36" height="18"/>
+      <rect x="556" y="296" width="20" height="14"/>
+      <rect x="1050" y="346" width="11" height="68"/>
+      <rect x="1030" y="318" width="54" height="22"/>
+      <rect x="1038" y="298" width="38" height="20"/>
+      <rect x="1046" y="282" width="22" height="16"/>
+    </g>
+    <rect y="404" width="1440" height="36" fill="#0b1c18"/>
+    <path d="M0 404h1440v10H0z" fill="#1d4a33"/>
+    <g fill="#2f6b45">
+      <rect x="24" y="408" width="10" height="6"/><rect x="66" y="410" width="8" height="5"/>
+      <rect x="146" y="408" width="9" height="6"/><rect x="238" y="411" width="7" height="4"/>
+      <rect x="366" y="408" width="10" height="6"/><rect x="474" y="410" width="8" height="5"/>
+      <rect x="614" y="408" width="9" height="6"/><rect x="742" y="411" width="7" height="4"/>
+      <rect x="894" y="408" width="10" height="6"/><rect x="1030" y="410" width="8" height="5"/>
+      <rect x="1168" y="408" width="9" height="6"/><rect x="1304" y="411" width="7" height="4"/>
+    </g>
+    <rect y="440" width="1440" height="80" fill="#080d18"/>
+    <path d="M0 440h1440v6H0z" fill="#122b22"/>
+  </svg>
+  <div class="title-vignette" aria-hidden="true"></div>
+
+  <div class="title-inner">
+    <p class="eyebrow"><span class="rule"></span>A TERRARIA × BALATRO ROGUELIKE<span class="rule"></span></p>
+    <h1 class="logo"><span class="logo-terra">TERRA</span><span class="logo-ratro">RATRO</span></h1>
+    <p class="tagline">DIG DEEP. DRAW DEEP.</p>
+    <p class="title-sub">Build a deck. Forge a build. Fell eight gods of Terraria.</p>
+    <div class="title-buttons">
+      <button id="btn-new-run" class="btn btn-primary btn-lg">New Run</button>
+      <button id="btn-continue-run" class="btn btn-ghost btn-lg hidden">Continue Run</button>
+      <button id="btn-help-title" class="btn btn-ghost btn-lg">How to Play</button>
+    </div>
+    <div class="title-meta">
+      <span id="title-best">No runs yet.</span>
+      <span class="dot">·</span>
+      <span>Fan-made mashup</span>
+    </div>
+  </div>
+
+  <div class="float-card fc-1" aria-hidden="true"><span class="fc-rank">A</span><svg class="fc-suit"><use href="#suit-melee"/></svg></div>
+  <div class="float-card fc-2" aria-hidden="true"><span class="fc-rank">K</span><svg class="fc-suit"><use href="#suit-magic"/></svg></div>
+  <div class="float-card fc-3" aria-hidden="true"><span class="fc-rank">Q</span><svg class="fc-suit"><use href="#suit-summon"/></svg></div>
+  <div class="title-caption">A browser deckbuilder · v1.0</div>
+</div>
+
+<!-- GAME -->
+<div id="game-screen" class="screen game-screen hidden">
+  <header class="topbar">
+    <div class="brand" id="brand">TERRARATRO</div>
+    <div class="trail" id="trail" aria-label="Boss progress"></div>
+    <div class="top-actions">
+      <div class="gold-pill" title="Gold"><svg class="coin-icon"><use href="#icon-coin"/></svg><span id="gold-value">10</span></div>
+      <button class="icon-btn" id="btn-sound-game" aria-label="Toggle sound"><svg><use href="#icon-sound"/></svg></button>
+      <button class="icon-btn" id="btn-help-game" aria-label="How to play"><svg><use href="#icon-help"/></svg></button>
+      <button class="icon-btn" id="btn-menu" aria-label="Menu"><svg><use href="#icon-menu"/></svg></button>
+    </div>
+  </header>
+
+  <main class="table-layout">
+    <aside class="sidebar">
+      <section class="boss-panel panel">
+        <div class="boss-glow" id="boss-glow"></div>
+        <div class="boss-visual">
+          <canvas id="boss-sprite" class="boss-sprite" aria-hidden="true"></canvas>
+          <div class="boss-shadow"></div>
+        </div>
+        <div class="boss-meta">
+          <span class="biome-chip" id="boss-biome">FOREST</span>
+          <h2 class="boss-name" id="boss-name">King Slime</h2>
+          <p class="boss-epithet" id="boss-epithet">The Gelatinous Crown</p>
+        </div>
+        <div class="boss-effect"><svg class="eff-icon"><use href="#icon-skull"/></svg><span id="boss-effect">Gelatinous: -20 base Damage</span></div>
+        <div class="boss-hp">
+          <div class="hp-labels"><span>BOSS HP</span><span id="target-value">300</span></div>
+          <div class="hp-bar"><div class="hp-fill" id="hp-fill"></div><div class="hp-ticks"></div></div>
+          <div class="damage-row">
+            <span class="damage-label">DAMAGE DEALT</span>
+            <span class="damage-value" id="round-score">0</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="resource-row">
+        <div class="resource panel">
+          <svg class="res-icon"><use href="#icon-cards"/></svg>
+          <div class="res-text"><b id="hands-left">4</b><span>HANDS</span></div>
+        </div>
+        <div class="resource panel">
+          <svg class="res-icon"><use href="#icon-discard"/></svg>
+          <div class="res-text"><b id="discards-left">3</b><span>DISCARDS</span></div>
+        </div>
+      </section>
+
+      <section class="accessories panel">
+        <div class="acc-head"><span>ACCESSORIES</span><span id="acc-count">0 / 5</span></div>
+        <div class="joker-slots" id="joker-slots"></div>
+        <p class="acc-hint" id="acc-hint">Buy accessories in the shop between bosses.</p>
+      </section>
+    </aside>
+
+    <section class="board">
+      <div class="board-top">
+        <div class="hand-readout">
+          <span class="readout-kicker">HAND</span>
+          <span class="readout-name" id="hand-name">Select up to 5 cards</span>
+          <span class="readout-math" id="hand-math"></span>
+        </div>
+        <div class="board-controls">
+          <button class="mini-btn" id="btn-sort"><svg class="mini-icon"><use href="#icon-sort"/></svg><span>Rank</span></button>
+          <button class="mini-btn icon-only" id="btn-help-board" aria-label="How to play"><svg class="mini-icon"><use href="#icon-help"/></svg></button>
+        </div>
+      </div>
+
+      <div class="battlefield" id="battlefield">
+        <div class="idle-hint" id="idle-hint">
+          <div class="idle-rune"><svg><use href="#icon-sword"/></svg></div>
+          <p>Choose cards from your hand to strike.</p>
+          <small>Pairs, flushes, straights, and gem-tipped cards all raise your damage.</small>
+        </div>
+        <div class="played-row" id="played-row"></div>
+        <div class="hand-banner hidden" id="hand-banner">
+          <span class="banner-kicker" id="banner-kicker">PAIR</span>
+          <span class="banner-math" id="banner-math">10 × 2</span>
+        </div>
+        <div class="score-popups" id="score-popups"></div>
+        <div class="score-total hidden" id="score-total"><span class="st-label">DAMAGE</span><span class="st-value" id="st-value">0</span></div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-play" id="btn-play" disabled>
+          <span>Play Hand</span><kbd>Enter</kbd>
+        </button>
+        <div class="selection-info"><b id="selected-count">0</b> / 5 selected</div>
+        <button class="btn btn-discard" id="btn-discard" disabled>
+          <span>Discard</span><kbd>D</kbd>
+        </button>
+      </div>
+
+      <div class="hand-wrap">
+        <div class="hand" id="hand"></div>
+      </div>
+    </section>
+  </main>
+  <div class="score-flash" id="score-flash" aria-hidden="true"></div>
+</div>
+
+<!-- SHOP -->
+<div id="shop-screen" class="screen shop-screen hidden">
+  <div class="shop-vignette" aria-hidden="true"></div>
+  <header class="shop-head">
+    <div class="merchant">
+      <div class="merchant-portrait"><canvas id="merchant-sprite" aria-hidden="true"></canvas></div>
+      <div class="merchant-text">
+        <p class="shop-kicker">ANTE <span id="shop-ante">I</span> CLEARED</p>
+        <h2>The Merchant</h2>
+        <p class="merchant-line" id="merchant-line">"Gold buys steel, steel buys survival. What'll it be?"</p>
+      </div>
+    </div>
+    <div class="shop-right">
+      <div class="gold-pill gold-large"><svg class="coin-icon"><use href="#icon-coin"/></svg><span id="shop-gold">10</span></div>
+      <button class="icon-btn" id="btn-sound-shop" aria-label="Toggle sound"><svg><use href="#icon-sound"/></svg></button>
+    </div>
+  </header>
+
+  <main class="shop-main">
+    <div class="shop-columns">
+      <section class="shop-section">
+        <div class="section-head"><h3>ACCESSORIES</h3><span>Permanent for this run</span></div>
+        <div class="shop-jokers" id="shop-jokers"></div>
+      </section>
+      <aside class="shop-side">
+        <section class="shop-section">
+          <div class="section-head"><h3>MERCHANT'S WARES</h3><span>One-of-a-kind</span></div>
+          <div class="shop-wares" id="shop-wares"></div>
+        </section>
+        <section class="shop-section owned-section">
+          <div class="section-head"><h3>YOUR BUILD</h3><span id="owned-count">0 / 5</span></div>
+          <div class="owned-jokers" id="owned-jokers"></div>
+        </section>
+      </aside>
+    </div>
+    <section class="next-boss-panel" id="next-boss-panel">
+      <div class="nb-portrait"><canvas id="next-boss-sprite" aria-hidden="true"></canvas></div>
+      <div class="nb-info">
+        <span class="nb-kicker">NEXT CHALLENGE</span>
+        <h3 id="next-boss-name">Eye of Cthulhu</h3>
+        <p id="next-boss-effect">Gaze: Magic cards deal no Damage</p>
+      </div>
+      <div class="nb-hp"><span>BOSS HP</span><b id="next-boss-hp">810</b></div>
+    </section>
+    <footer class="shop-foot">
+      <p class="shop-tip" id="shop-tip">Tip: Mult multiplies Damage. A little Mult goes a long way.</p>
+      <button class="btn btn-primary btn-lg" id="btn-leave-shop">Descend to <span id="next-boss-label">the next boss</span></button>
+    </footer>
+  </main>
+</div>
+
+<!-- REWARD -->
+<div id="reward-overlay" class="overlay hidden">
+  <div class="reward-card panel">
+    <p class="reward-kicker">BOSS DEFEATED</p>
+    <h2 id="reward-title">King Slime</h2>
+    <p class="reward-sub" id="reward-sub">The forest is safe. For now.</p>
+    <div class="reward-lines" id="reward-lines"></div>
+    <div class="reward-total">+<span id="reward-total">0</span><span class="reward-gold-label">GOLD</span></div>
+    <button class="btn btn-primary btn-lg" id="btn-reward-continue">Enter the Shop</button>
+  </div>
+</div>
+
+<!-- BOSS INTRO -->
+<div id="boss-intro" class="overlay hidden intro-overlay">
+  <div class="intro-card">
+    <p class="intro-kicker" id="intro-ante">ANTE I · FOREST</p>
+    <div class="intro-art"><div class="intro-aura"></div><canvas id="intro-sprite" aria-hidden="true"></canvas></div>
+    <h2 id="intro-name">King Slime</h2>
+    <p class="intro-epithet" id="intro-epithet">The Gelatinous Crown</p>
+    <div class="intro-effect" id="intro-effect">Gelatinous: -20 base Damage</div>
+    <div class="intro-target">BOSS HP <b id="intro-target">300</b><span class="intro-vs">vs</span><b>YOUR DECK</b></div>
+    <button class="btn btn-primary btn-lg" id="btn-intro-begin">Begin the Fight</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result-overlay" class="overlay hidden">
+  <div class="result-card panel">
+    <p class="result-kicker" id="result-kicker">RUN COMPLETE</p>
+    <h2 id="result-title">The Moon Lord Falls</h2>
+    <p class="result-sub" id="result-sub">Terraria is safe. The deck is legend.</p>
+    <div class="result-stats" id="result-stats"></div>
+    <div class="result-actions">
+      <button class="btn btn-primary" id="btn-result-new">New Run</button>
+      <button class="btn btn-ghost" id="btn-result-title">Title Screen</button>
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div id="menu-overlay" class="overlay hidden">
+  <div class="menu-card panel">
+    <h2>Paused</h2>
+    <p class="menu-sub">The boss politely waits.</p>
+    <div class="menu-actions">
+      <button class="btn btn-primary" id="btn-resume">Resume Run</button>
+      <button class="btn btn-ghost" id="btn-menu-help">How to Play</button>
+      <button class="btn btn-ghost" id="btn-abandon">Abandon Run</button>
+      <button class="btn btn-ghost" id="btn-menu-title">Save &amp; Quit to Title</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP -->
+<div id="help-overlay" class="overlay hidden">
+  <div class="help-card panel">
+    <button class="icon-btn help-close" id="btn-help-close" aria-label="Close help">×</button>
+    <p class="help-kicker">FIELD GUIDE</p>
+    <h2>How to Play</h2>
+    <div class="help-grid">
+      <section>
+        <h3><span class="num">1</span> Play poker. Deal damage.</h3>
+        <p>Pick up to <b>5 cards</b> and play a poker hand. Your <b>Damage × Mult</b> becomes the hit. Drain the boss's HP before you run out of hands.</p>
+      </section>
+      <section>
+        <h3><span class="num">2</span> Build the deck.</h3>
+        <p>Each card's rank adds <b>Damage</b>. Gems add Damage or Mult. Buy gem caches at the shop to permanently tip more cards.</p>
+      </section>
+      <section>
+        <h3><span class="num">3</span> Collect accessories.</h3>
+        <p>Accessories are this world's jokers. They trigger every hand. Five slots, dozens of synergies, one very angry moon.</p>
+      </section>
+      <section>
+        <h3><span class="num">4</span> Read the boss.</h3>
+        <p>Every boss warps the rules: dead suits, disabled accessories, smaller hands. Build around the next fight, not the last one.</p>
+      </section>
+    </div>
+    <div class="help-strip">
+      <div class="help-hands">
+        <span class="mini-card"><b>10</b><small>+ Damage</small></span>
+        <span class="help-times">×</span>
+        <span class="mini-card mult"><b>4</b><small>Mult</small></span>
+        <span class="help-equals">=</span>
+        <span class="mini-card total"><b>40</b><small>Damage</small></span>
+      </div>
+      <p class="help-keys"><kbd>1</kbd>–<kbd>9</kbd> select · <kbd>Enter</kbd> play · <kbd>D</kbd> discard · <kbd>S</kbd> sort · <kbd>H</kbd> help</p>
+    </div>
+    <p class="help-foot">Terraratro is a fan-made love letter to Terraria and Balatro. Not affiliated with Re-Logic or LocalThunk.</p>
+  </div>
+</div>
+
+<div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+
+<script type="module" src="src/game.js"></script>
+</body>
+</html>
